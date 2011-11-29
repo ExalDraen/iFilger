@@ -221,57 +221,57 @@ C["Filger_Spells"] = {
 		},
 	},
 	["PRIEST"] = { -------------------------------------------------------------------------------------------------------- Priest
-		{
-			Name = "Self Buffs",
-			Direction = "LEFT",
-			Interval = 4,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "BOTTOMRIGHT", "iFilgerBuffPlayerHeal", 0, 24 },
+		-- {
+			-- Name = "Self Buffs",
+			-- Direction = "LEFT",
+			-- Interval = 4,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "BOTTOMRIGHT", "iFilgerBuffPlayerHeal", 0, 24 },
 
-			-- Inner Fire
-			 { spellID = 588, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Inner Will
-			{ spellID = 73413, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Fear Ward
-			{ spellID = 6346, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Inner Fire
+			 -- { spellID = 588, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Inner Will
+			-- { spellID = 73413, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Fear Ward
+			-- { spellID = 6346, size = 32, unitId = "player", caster = "player", filter = "BUFF" },
 
-		},
-		{
-			Name = "Cooldown",
-			Direction = "UP",
-			Interval = 3,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "BOTTOMRIGHT", "iFilgerCooldowns", 40, 0 },
+		-- },
+		-- {
+			-- Name = "Cooldown",
+			-- Direction = "UP",
+			-- Interval = 3,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "BOTTOMRIGHT", "iFilgerCooldowns", 40, 0 },
 
-			-- Dispersion
-			{ spellID = 47585, size = 37, filter = "CD" }, 
-			-- Guardian Spirit
-			{ spellID = 47788, size = 37, filter = "CD" }, 
-			-- Holy Word: Sanctuary
-			{ spellID = 88686, size = 37, filter = "CD" }, 
-			-- Inner Focus
-			{ spellID = 89485, size = 37, filter = "CD" }, 
-			-- Penance
-			{ spellID = 47540, size = 37, filter = "CD" }, 
-			-- Circle of Healing
-			{ spellID = 34861, size = 37, filter = "CD" },
-			-- Prayer of Mending
-			{ spellID = 33076, size = 37, filter = "CD" },
-			-- Psychic Scream
-			{ spellID = 8122, size = 37, filter = "CD" }, 
-			-- Shadowfiend
-			{ spellID = 34433, size = 37, filter = "CD" },
-			-- Archangel
-			{ spellID = 87151, size = 37, filter = "CD" },
-			-- Desperate Prayer
-			{ spellID = 19236, size = 37, filter = "CD" },
-			-- Holy Word: Chastise
-			{ spellID = 88625, size = 37, filter = "CD" },
-		},
+			-- -- Dispersion
+			-- { spellID = 47585, size = 37, filter = "CD" }, 
+			-- -- Guardian Spirit
+			-- { spellID = 47788, size = 37, filter = "CD" }, 
+			-- -- Holy Word: Sanctuary
+			-- { spellID = 88686, size = 37, filter = "CD" }, 
+			-- -- Inner Focus
+			-- { spellID = 89485, size = 37, filter = "CD" }, 
+			-- -- Penance
+			-- { spellID = 47540, size = 37, filter = "CD" }, 
+			-- -- Circle of Healing
+			-- { spellID = 34861, size = 37, filter = "CD" },
+			-- -- Prayer of Mending
+			-- { spellID = 33076, size = 37, filter = "CD" },
+			-- -- Psychic Scream
+			-- { spellID = 8122, size = 37, filter = "CD" }, 
+			-- -- Shadowfiend
+			-- { spellID = 34433, size = 37, filter = "CD" },
+			-- -- Archangel
+			-- { spellID = 87151, size = 37, filter = "CD" },
+			-- -- Desperate Prayer
+			-- { spellID = 19236, size = 37, filter = "CD" },
+			-- -- Holy Word: Chastise
+			-- { spellID = 88625, size = 37, filter = "CD" },
+		-- },
 		{
 			Name = "Buffs and Debuffs",
 			Direction = "RIGHT",
@@ -281,22 +281,22 @@ C["Filger_Spells"] = {
 			BarWidth = 150,
 			setPoint = { "BOTTOMLEFT", "iFilgerBuffDebuff", 0, 24 },
 
-			-- Guardian Spirit
-			{ spellID = 47788, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Pain Suppression
-			{ spellID = 33206, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Renew
-			{ spellID = 139, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Power Word: Shield
-			{ spellID = 17, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Inner Focus
-			{ spellID = 89485, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Strength of Soul
-			{ spellID = 96267, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Fade / Verblassen
-			{ spellID = 586, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
-			-- Borrowed Time
-			{ spellID = 59889, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Guardian Spirit
+			-- { spellID = 47788, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Pain Suppression
+			-- { spellID = 33206, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Renew
+			-- { spellID = 139, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Power Word: Shield
+			-- { spellID = 17, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Inner Focus
+			-- { spellID = 89485, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Strength of Soul
+			-- { spellID = 96267, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Fade / Verblassen
+			-- { spellID = 586, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
+			-- -- Borrowed Time
+			-- { spellID = 59889, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
 			
 			-- Chakra: Serenity
 			{ spellID = 81208, size = 37, unitId = "player", caster = "player", filter = "BUFF" },
@@ -325,69 +325,69 @@ C["Filger_Spells"] = {
 			-- Evangelism
 			{ spellID = 81662, size = 60, unitId = "player", caster = "player", filter = "BUFF" },
 		},	
-		{
-			Name = "Buffs and Debuffs HEAL",
-			Direction = "LEFT",
-			Interval = 3,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "TOPRIGHT", "iFilgerBuffDebuffHeal", 20, -22 },
+		-- {
+			-- Name = "Buffs and Debuffs HEAL",
+			-- Direction = "LEFT",
+			-- Interval = 3,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "TOPRIGHT", "iFilgerBuffDebuffHeal", 20, -22 },
 
-			-- Prayer of Mending
-			{ spellID = 41635, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Guardian Spirit
-			{ spellID = 47788, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Pain Suppression
-			{ spellID = 33206, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Power Word: Shield
-			{ spellID = 17, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Renew
-			{ spellID = 139, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Fear Ward
-			{ spellID = 6346, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Echo of Light
-			{ spellID = 77489, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Inspiration
-			{ spellID = 15357, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-			-- Grace
-			{ spellID = 77613, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
-		},
-		{
-			Name = "Focus",
-			Direction = "LEFT",
-			IconSide = "LEFT",
-			Interval = 4,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "TOPRIGHT", "iFilgerFocusBuffs", 0, -22 },
+			-- -- Prayer of Mending
+			-- { spellID = 41635, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Guardian Spirit
+			-- { spellID = 47788, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Pain Suppression
+			-- { spellID = 33206, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Power Word: Shield
+			-- { spellID = 17, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Renew
+			-- { spellID = 139, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Fear Ward
+			-- { spellID = 6346, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Echo of Light
+			-- { spellID = 77489, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Inspiration
+			-- { spellID = 15357, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- -- Grace
+			-- { spellID = 77613, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+		-- },
+		-- {
+			-- Name = "Focus",
+			-- Direction = "LEFT",
+			-- IconSide = "LEFT",
+			-- Interval = 4,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "TOPRIGHT", "iFilgerFocusBuffs", 0, -22 },
 
-			-- Shackle Undead
-			{ spellID = 9484, size = 32, unitId = "focus", caster = "all", filter = "DEBUFF" },
-			-- Psychic Scream
-			{ spellID = 8122, size = 32, unitId = "focus", caster = "all", filter = "DEBUFF" },
-			-- Shadow Word: Pain
-			{ spellID = 589, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
-			-- Devouring Plague
-			{ spellID = 2944, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
-			-- Vampiric Touch
-			{ spellID = 34914, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
-		},
-		{	
-			Name = "Cooldown",
-			Direction = "UP",
-			Interval = 3,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "BOTTOM", "iFilgerProcDps", 0, 52 },
+			-- -- Shackle Undead
+			-- { spellID = 9484, size = 32, unitId = "focus", caster = "all", filter = "DEBUFF" },
+			-- -- Psychic Scream
+			-- { spellID = 8122, size = 32, unitId = "focus", caster = "all", filter = "DEBUFF" },
+			-- -- Shadow Word: Pain
+			-- { spellID = 589, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
+			-- -- Devouring Plague
+			-- { spellID = 2944, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
+			-- -- Vampiric Touch
+			-- { spellID = 34914, size = 32, unitId = "focus", caster = "player", filter = "DEBUFF" },
+		-- },
+		-- {	
+			-- Name = "Cooldown",
+			-- Direction = "UP",
+			-- Interval = 3,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "BOTTOM", "iFilgerProcDps", 0, 52 },
 
-			-- Mind Blast
-			{ spellID = 8092, size = 36, filter = "CD" },
-			-- Holy Fire
-			{ spellID = 14914, size = 36, filter = "CD" },
-		},
+			-- -- Mind Blast
+			-- { spellID = 8092, size = 36, filter = "CD" },
+			-- -- Holy Fire
+			-- { spellID = 14914, size = 36, filter = "CD" },
+		-- },
 		{
 			Name = "Buffs and Debuffs",
 			Direction = "LEFT",
@@ -409,26 +409,26 @@ C["Filger_Spells"] = {
 			{ spellID = 47585, size = 36, unitId = "player", caster = "player", filter = "BUFF" },
 			
 		},
-		{
-			Name = "Buffs and Debuffs",
-			Direction = "RIGHT",
-			Interval = 3,
-			Mode = "ICON",
-			Alpha = 1,
-			BarWidth = 150,
-			setPoint = { "BOTTOMLEFT", "iFilgerDebuffDps", 0, 22},
+		-- {
+			-- Name = "Buffs and Debuffs",
+			-- Direction = "RIGHT",
+			-- Interval = 3,
+			-- Mode = "ICON",
+			-- Alpha = 1,
+			-- BarWidth = 150,
+			-- setPoint = { "BOTTOMLEFT", "iFilgerDebuffDps", 0, 22},
 
-			-- Shackle undead
-			{ spellID = 9484, size = 36, unitId = "target", caster = "all", filter = "DEBUFF" },
-			-- Psychic Scream
-			{ spellID = 8122, size = 36, unitId = "target", caster = "all", filter = "DEBUFF" },
-			-- Shadow Word: Pain
-			{ spellID = 589, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
-			-- Devouring Plague
-			{ spellID = 2944, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
-			-- Vampiric Touch
-			{ spellID = 34914, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
-		},
+			-- -- Shackle undead
+			-- { spellID = 9484, size = 36, unitId = "target", caster = "all", filter = "DEBUFF" },
+			-- -- Psychic Scream
+			-- { spellID = 8122, size = 36, unitId = "target", caster = "all", filter = "DEBUFF" },
+			-- -- Shadow Word: Pain
+			-- { spellID = 589, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
+			-- -- Devouring Plague
+			-- { spellID = 2944, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
+			-- -- Vampiric Touch
+			-- { spellID = 34914, size = 36, unitId = "target", caster = "player", filter = "DEBUFF" },
+		-- },
 	},
 	["WARLOCK"] = { -------------------------------------------------------------------------------------------------------- Warlock
 		{
