@@ -13,11 +13,15 @@ end
 -- Name need to be case sensitive
 ----------------------------------------------------------------------------
 
-if I.myname == "Tukz" then
-	-- yeah my default config is not really like default tukui.
+if I.myname == "Ildyria" then
+	C.general.cleverzone = true
+--	C.general.tooltip = false
+	iFilgerBuffConfig["Filger_Spells"]["ALL"][3].Enable = false -- disable ICD
+	-- yeah my default config is not really like default iFilger.
 end
 
 if I.myname == "Nâmi" then
-	C["general"].PVP = false
-	C["general"].TANKS = true
+	for index, value in ipairs(iFilgerBuffConfig["Filger_Spells"]["PVP"]) do
+		value.Enable = false
+	end
 end

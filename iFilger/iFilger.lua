@@ -2,18 +2,27 @@
 	Filger
 	Copyright (c) 2009, Nils Ruesch
 ]]
-
 local I, C, L = unpack(select(2, ...)) -- Import: I - functions, constants, variables; C - config; L - locales
 
-local Filger_Spells = C.Filger_Spells;
+local Filger_Spells;
+if iFilgerBuffConfig then 
+	Filger_Spells = iFilgerBuffConfig["Filger_Spells"]
+	C.Filger_Spells = nil
+	C.Filger_Panels = nil
+else
+	Filger_Spells = C.Filger_Spells
+end
 
 local class = select(2, UnitClass("player"));
 local classcolor = RAID_CLASS_COLORS[class];
 local active, bars = {}, {};
 
+
 local time, Update;
+
+
 local function OnUpdate(self, elapsed)
-	time = self.filter == "CD" and self.expirationTime+self.duration-GetTime() or self.expirationTime-GetTime();
+	time = ( self.filter == "CD" or self.filter == "ICD" ) and ( self.expirationTime + self.duration - GetTime() ) or ( self.expirationTime - GetTime() );
 	if (self:GetParent().Mode == "BAR") then
 		self.statusbar:SetValue(time);
 		if time <= 60 then
@@ -22,7 +31,7 @@ local function OnUpdate(self, elapsed)
 			self.time:SetFormattedText("%d:%.2d",(time/60),(time%60));
 		end
 	end
-	if (time < 0 and self.filter == "CD") then
+	if ( time < 0 and ( self.filter == "CD"  or self.filter == "ICD" ) )then
 		local id = self:GetParent().Id;
 		for index, value in ipairs(active[id]) do
 			local spn = GetSpellInfo(value.data.spellID or value.data.slotID)
@@ -35,6 +44,7 @@ local function OnUpdate(self, elapsed)
 		Update(self:GetParent());
 	end
 end
+
 
 
 ------------------------------------------------------------
@@ -73,6 +83,37 @@ local function FilgerUnitDebuff(unitID, inSpellID, spn, absID)
     end
   end
   return nil
+end
+
+
+
+------------------------------------------------------------
+-- Tooltip functions
+------------------------------------------------------------
+
+local function TooltipOnEnter(self)
+	if (self.spellID > 20) then -- coz slot ID... need to work on that soon : creating LUA error when mouseover a trinket tooltip
+		local str = "spell:%s"
+		local BadTotems = {
+		[8076] = 8075,
+		[8972] = 8071,
+		[5677] = 5675,
+		}
+		GameTooltip:ClearLines()
+		GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT", 0, 7)
+		if BadTotems[self.spell] then
+			GameTooltip:SetHyperlink(format(str, BadTotems[self.spellID]))
+		else
+			GameTooltip:SetHyperlink(format(str, self.spellID))
+		end
+--		GameTooltip:AddLine(GetSpellInfo(self.spellID), 1, 1, 1, 1, 1, 1)
+--		GameTooltip:AddLine("ID : "..self.spellID, .6, .6, .6, .6, .6, .6)
+		GameTooltip:Show()
+	end
+end
+
+local function TooltipOnLeave(self)
+        GameTooltip:Hide()
 end
 
 
@@ -201,6 +242,13 @@ function Update(self)
 					bar.spellname:SetJustifyH("LEFT");
 				end
 			end
+			
+			if (C.general.tooltip) then
+				bar:EnableMouse(true)
+				bar:SetScript("OnEnter", TooltipOnEnter)
+				bar:SetScript("OnLeave", TooltipOnLeave)
+			end
+			
 			tinsert(bars[id], bar);
 		end
 		
@@ -216,16 +264,18 @@ function Update(self)
 		end
 
 		bar.spellName = GetSpellInfo( value.data.spellID or value.data.slotID );
-		
+		bar.spellID = value.spid --data.spellID or value.data.slotID
+
 		bar.icon:SetTexture(value.icon);
 		bar.count:SetText(value.count > 1 and value.count or "");
 		if (self.Mode == "BAR") then
 			bar.spellname:SetText(value.data.displayName or GetSpellInfo( value.data.spellID ));
 		end
+
 		if (value.duration > 0) then
 			if (self.Mode == "ICON") then
-				CooldownFrame_SetTimer(bar.cooldown, value.data.filter == "CD" and value.expirationTime or value.expirationTime-value.duration, value.duration, 1);
-				if (value.data.filter == "CD") then
+				CooldownFrame_SetTimer(bar.cooldown, ( value.data.filter == "CD" or value.data.filter == "ICD" ) and value.expirationTime or value.expirationTime - value.duration, value.duration, 1);
+				if (value.data.filter == "CD" or value.data.filter == "ICD" ) then
 					bar.expirationTime = value.expirationTime;
 					bar.duration = value.duration;
 					bar.filter = value.data.filter;
@@ -248,7 +298,7 @@ function Update(self)
 				bar:SetScript("OnUpdate", nil);
 			end
 		end
-		
+
 		bar:Show();
 	end
 end
@@ -262,21 +312,58 @@ end
 local function OnEvent(self, event, ...)
 	local unit = ...;
 	if ( ( unit == "target" or unit == "player" or unit == "pet" or unit == "focus" ) or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_ENTERING_WORLD" or event == "SPELL_UPDATE_COOLDOWN" ) then
-		local data, name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable, start, enabled, slotLink, spn, spid;
+		local data, name, icon, count, duration, expirationTime, caster, start, enabled, slotLink, spn, spid;
 		local id = self.Id;
 		for i=1, #Filger_Spells[class][id], 1 do
+			name, duration, expirationTime, caster, start, enabled = nil, nil, nil, nil, nil, nil; -- cleaning vars...
 			data = Filger_Spells[class][id][i];
 			if (data.filter == "BUFF") then
 				spn = GetSpellInfo( data.spellID )
-				name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable, _, spid = FilgerUnitBuff(data.unitId, data.spellID, spn, data.absID);
+				name, _, icon, count, _, duration, expirationTime, caster, _, _, spid = FilgerUnitBuff(data.unitId, data.spellID, spn, data.absID);
+			elseif (data.filter == "IBUFF") then
+				spn, _, icon = GetSpellInfo( data.spellID )
+				name, _, _, count, _, duration, expirationTime, caster, _, _, spid = FilgerUnitBuff(data.unitId, data.spellID, spn, data.absID);
+				if (not name) then
+					name = spn
+					duration = 0
+					count = 0
+					expirationTime = 0
+					caster = "all"
+					spid = data.spellID
+				else
+					name = nil
+				end
 			elseif (data.filter == "DEBUFF") then
 				spn = GetSpellInfo( data.spellID )
-				name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable, _, spid = FilgerUnitDebuff(data.unitId, data.spellID, spn, data.absID);
-			else
+				name, _, icon, count, _, duration, expirationTime, caster, _, _, spid = FilgerUnitDebuff(data.unitId, data.spellID, spn, data.absID);
+			elseif (data.filter == "IDEBUFF" and InCombatLockdown()) then
+				spn, _, icon = GetSpellInfo( data.spellID )
+				name, _, _, count, _, duration, expirationTime, caster, _, _, spid = FilgerUnitDebuff(data.unitId, data.spellID, spn, data.absID);
+				if (not name) then
+					name = spn
+					duration = 0
+					count = 0
+					expirationTime = 0
+					caster = "player"
+					spid = data.spellID
+				elseif(caster ~= "player" and data.caster ~= "all") then
+					name = spn
+					duration = 0
+					count = 0
+					expirationTime = 0
+					caster = "player"
+					spid = data.spellID
+				else
+					name = nil
+					duration = 0
+					expirationTime = 0
+				end
+			elseif (data.filter == "CD") then
 				if (data.spellID) then
 					spn = GetSpellInfo(data.spellID)
 					start, duration, enabled = GetSpellCooldown(spn);
 					name, _, icon = GetSpellInfo(data.spellID);
+					spid = data.spellID;
 				else
 					slotLink = GetInventoryItemLink("player", data.slotID);
 					if ( slotLink ) then
@@ -286,22 +373,77 @@ local function OnEvent(self, event, ...)
 						end
 						start, duration, enabled = GetInventoryItemCooldown("player", data.slotID);
 					end
+					spid = data.slotID;
 				end
-				spid = 0;
 				count = 0;
 				caster = "all";
+			elseif (data.filter == "ACD" and InCombatLockdown()) then
+				spn = GetSpellInfo(data.spellID);
+				start, duration, enabled = GetSpellCooldown(spn);
+				name, _, icon = GetSpellInfo(data.spellID);
+				spid = data.spellID;
+				local usable, _ = IsUsableSpell(data.spellID);
+				if(not enabled) then
+					name = nil;
+				elseif(enabled == 0 or (start > 0 and duration > 0)) then
+					name = nil;
+				end
+				expirationTime = 0;
+				duration = 0;
+				count = 0;
+				caster = "all";
+			elseif ( data.filter == "ICD" ) then
+				enabled = 0;
+				if ( data.trigger == "BUFF" ) then
+					spn = GetSpellInfo( data.spellID );
+					name, _, icon, _, _, _, _, _, _, _, spid = FilgerUnitBuff("player", data.spellID, spn, data.absID);
+				elseif (data.trigger == "DEBUFF") then
+					spn = GetSpellInfo( data.spellID )
+					name, _, icon, _, _, _, _, _, _, _, spid = FilgerUnitDebuff("player", data.spellID, spn, data.absID);
+				end
+				if ( data.slotID ) then
+					slotLink = GetInventoryItemLink("player", data.slotID)
+					name, _, _, _, _, _, _, _, _, icon = GetItemInfo(slotLink)
+					spn = name
+					spid = data.slotID
+				end
+				start = GetTime()
+				duration = data.duration
+				caster = "all"
+				count = 0
+				if ( name ) then
+					enabled = 1
+				end
 			end
+			
 			if (not active[id]) then
 				active[id] = {};
 			end
-			for index, value in ipairs(active[id]) do
-				if (data.spellID == value.data.spellID) then
-					tremove(active[id], index);
-					break;
+
+			-- remove existing and insert if needed
+			local toInsert = true -- by default, insert in active
+			if ( data.filter == "ICD" ) then
+				-- Don't insert if an ICD already exists
+				for index, value in ipairs(active[id]) do
+					if ( data.spellID == value.data.spellID and value.data.filter == "ICD" ) then
+						toInsert = false
+						break
+					end
+				end
+			else
+				-- Remove existing non-ICD
+				for index, value in ipairs(active[id]) do
+					if (data.spellID == value.data.spellID and value.data.filter ~= "ICD" ) then
+						tremove(active[id], index)
+						--print("#active["..id.."]"..(#active[id]))
+					end
 				end
 			end
-			if (( name and ( data.caster ~= 1 and ( caster == data.caster or data.caster == "all" ))) or ( ( enabled or 0 ) > 0 and ( duration or 0 ) > 1.5 ) ) then
-				table.insert(active[id], { data = data, icon = icon, count = count, duration = duration, expirationTime = expirationTime or start });
+
+			if ( toInsert ) then
+				if (( name and ( data.caster ~= 1 and ( caster == data.caster or data.caster == "all" ))) or ( ( enabled or 0 ) > 0 and ( duration or 0 ) > 1.5 ) ) then
+					table.insert(active[id], { data = data, icon = icon, count = count, duration = duration, expirationTime = expirationTime or start, spid = spid });
+				end
 			end
 		end
 		Update(self);
@@ -314,62 +456,181 @@ end
 -- spell list configuration
 ------------------------------------------------------------
 
-local iFilgerSpells = CreateFrame("frame")
-
 function I.UpdateSpellList(zone)
 
 	if (not Filger_Spells[class]) then
 		Filger_Spells[class] = {}
 	end
 	
+	for index, value in ipairs(Filger_Spells[class]) do
+		if value.Enable == false then
+			I.Print("class : " .. value.Name .. " disabled")
+			tremove(Filger_Spells[class], index);
+		end
+	end
+
 	local loaded = "";
+	local loading = false;
 
 	if (Filger_Spells["ALL"]) then
 		for i = 1, #Filger_Spells["ALL"], 1 do
-			table.insert(Filger_Spells[class], Filger_Spells["ALL"][i])
+			-- merge similar spell-list (compare using Name and merge flag set) otherwise add another spell-list
+			if Filger_Spells["ALL"][i].Enable then
+				local merge = false
+				local spellListAll = Filger_Spells["ALL"][i]
+				local enable = spellListAll
+				local spellListClass = nil
+				for j = 1, #Filger_Spells[class], 1 do
+					spellListClass = Filger_Spells[class][j]
+					local mergeAll = spellListAll.Merge or false
+					local mergeClass = spellListClass.Merge or false
+					if ( spellListClass.Name == spellListAll.Name and ( mergeAll or mergeClass ) ) then
+						merge = true
+						break
+					end
+				end
+				if ( not merge or spellListClass == nil ) then
+					-- add another spell-list
+					table.insert(Filger_Spells[class], Filger_Spells["ALL"][i])
+				else
+					-- merge spell-list but class-specific position, direction, ...
+					--I.Print("MERGING SPELLS FROM "..spellListAll.Name)
+					for j = 1, #spellListAll, 1 do
+						table.insert( spellListClass, spellListAll[j] )
+						loading = true
+					end
+				end
+			end
 		end
-	loaded = loaded .. " ALL"
+		if (loading) then
+			loaded = loaded .. " ALL"
+			loading = false
+		end
 	end
 
-	if (Filger_Spells["PVE"] and C["general"].PVE and (zone == "pve" or zone == "config")) then
+	if (Filger_Spells["PVE"] and (zone == "pve" or zone == "config")) then
 		for i = 1, #Filger_Spells["PVE"], 1 do
-			table.insert(Filger_Spells[class], Filger_Spells["PVE"][i])
+			if (Filger_Spells["PVE"][i].Enable) then
+				table.insert(Filger_Spells[class], Filger_Spells["PVE"][i])
+				loading = true
+			end
 		end
-	loaded = loaded .. " PVE"
+		if (loading) then
+			loaded = loaded .. " PVE"
+			loading = false
+		end
 	end
 
-	if (Filger_Spells["TANKS"] and C["general"].TANKS and (zone == "pve" or zone == "config")) then
+	if (Filger_Spells["TANKS"] and (zone == "pve" or zone == "config")) then
 		for i = 1, #Filger_Spells["TANKS"], 1 do
-			table.insert(Filger_Spells[class], Filger_Spells["TANKS"][i])
+			if (Filger_Spells["TANKS"][i].Enable) then
+				table.insert(Filger_Spells[class], Filger_Spells["TANKS"][i])
+				loading = true
+			end
 		end
-	loaded = loaded .. " TANKS"
+		if (loading) then
+			loaded = loaded .. " TANKS"
+			loading = false
+		end
 	end
 
-	if (Filger_Spells["PVP"] and C["general"].PVP and (zone == "pvp" or zone == "config")) then
+	if (Filger_Spells["PVP"] and (zone == "pvp" or zone == "config")) then
 		for i = 1, #Filger_Spells["PVP"], 1 do
-			table.insert(Filger_Spells[class], Filger_Spells["PVP"][i])
+			if (Filger_Spells["PVP"][i].Enable) then
+				table.insert(Filger_Spells[class], Filger_Spells["PVP"][i])
+				loading = true
+			end
 		end
-	loaded = loaded .. " PVP"
+		if (loading) then
+			loaded = loaded .. " PVP"
+			loading = false
+		end
 	end
 
 	if (Filger_Spells["HUNTER/DRUID/ROGUE"] and (class == "HUNTER" or class == "DRUID" or class == "ROGUE")) then
 		for i = 1, #Filger_Spells["HUNTER/DRUID/ROGUE"], 1 do
-			table.insert(Filger_Spells[class], Filger_Spells["HUNTER/DRUID/ROGUE"][i])
+			if (Filger_Spells["HUNTER/DRUID/ROGUE"][i].Enable) then
+				table.insert(Filger_Spells[class], Filger_Spells["HUNTER/DRUID/ROGUE"][i])
+				loading = true
+			end
 		end
-	loaded = loaded .. " HDR"
+		if (loading) then
+			loaded = loaded .. " PVP"
+			loading = false
+		end
 	end
 
---	I.Print("MODULES LOADED :"..loaded)
+	I.Print("modules loaded :"..loaded)
 end
+
+
+
+------------------------------------------------------------
+-- Cleanning spell list. Credits to SinaC
+------------------------------------------------------------
+
+function I.CleanSpellList ()
+	
+	-- clean other sections wich are not used
+	for index in pairs(Filger_Spells) do
+		if (index ~= class) then
+			Filger_Spells[index] = nil
+		end
+	end
+
+	-- remove invalid spell and empty tables
+	local idx, data, frame = {}
+
+	for i = 1, #Filger_Spells[class], 1 do
+		local jdx, spn = {}
+		data = Filger_Spells[class][i]
+
+		for j = 1, #data, 1 do
+			if (data[j].spellID) then
+				spn = GetSpellInfo(data[j].spellID)
+			else
+				local slotLink = GetInventoryItemLink("player", data[j].slotID);
+				if (slotLink) then
+					spn = GetItemInfo(slotLink)
+				end
+			end
+
+			if (not spn and not data[j].slotID) then -- Warning only for spell, not for trinket
+				I.Print("WARNING - BAD spell/slot ID -> ".. (data[j].spellID or data[j].slotID or "UNKNOWN") .." !")
+				table.insert(jdx, j)
+			end
+		end
+		for _, v in ipairs(jdx) do
+			table.remove(data, v)
+		end
+
+		if (#data == 0) then
+			I.Print("WARNING - EMPTY section -> "..data.Name.." !")
+			table.insert(idx, i)
+		end
+	end
+	for _, v in ipairs(idx) do
+		table.remove(Filger_Spells[class], v)
+	end
+end
+
+
+
+------------------------------------------------------------
+-- Create frame spell list
+------------------------------------------------------------
 
 function I.UpdatesFramesList ()
 	if (Filger_Spells and Filger_Spells[class]) then
+		
 		for index in pairs(Filger_Spells) do
 			if (index ~= class) then
 				Filger_Spells[index] = nil;
 			end
 		end
 		
+		C.Filger_Panels = nil;
+
 		local data, frame;
 		for i = 1, #Filger_Spells[class], 1 do
 			data = Filger_Spells[class][i];
@@ -392,8 +653,15 @@ function I.UpdatesFramesList ()
 			frame:SetPoint(unpack(data.setPoint));
 			for j = 1, #Filger_Spells[class][i], 1 do
 				data = Filger_Spells[class][i][j];
-				if (data.filter == "CD") then
+				if (data.filter == "CD" or data.filter == "ACD") then
 					frame:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+					break;
+				end
+			end
+			for j = 1, #Filger_Spells[class][i], 1 do
+				data = Filger_Spells[class][i][j];
+				if (data.unitId == "focus") then
+					frame:RegisterEvent("PLAYER_FOCUS_CHANGED");
 					break;
 				end
 			end
@@ -405,22 +673,32 @@ function I.UpdatesFramesList ()
 	end
 end
 
-function checkzone()
-	--[[
-	local inInstance, instanceType = IsInInstance()
-	if inInstance and (instanceType == "raid" or instanceType == "party") then
-		I.UpdateSpellList("pve")
+
+
+------------------------------------------------------------
+-- checkzone for cleverzone check
+------------------------------------------------------------
+
+local function checkzone()
+
+	if C["general"].cleverzone then
+		-- yeah my default config is not really like default iFilger.
+		local inInstance, instanceType = IsInInstance()
+		if inInstance and (instanceType == "raid" or instanceType == "party") then
+			I.UpdateSpellList("pve")
+		else
+			I.UpdateSpellList("pvp")
+		end
 	else
-		I.UpdateSpellList("pvp")
-	end]]
-
-	-- COZ we don't want to reload each time we enter donjon...
-	I.UpdateSpellList("config")
-
+		I.UpdateSpellList("config")
+	end
+	I.CleanSpellList()
 	I.UpdatesFramesList()
 end
 
 checkzone()
+
+
 
 ------------------------------------------------------------
 -- configuration mode
@@ -440,11 +718,8 @@ local origa1, origf, origa2, origx, origy
 local function moving()
 	-- don't allow moving while in combat
 	if InCombatLockdown() then print(ERR_NOT_IN_COMBAT) return end
-
---	I.UpdateSpellList("config")
---	I.UpdatesFramesList()
 	
-	local data, frame;
+	local data, frame, name, spellIcon, slotLink;
 	for i = 1, #Filger_Spells[class], 1 do
 		data = Filger_Spells[class][i];
 		
@@ -460,8 +735,7 @@ local function moving()
 		frame.setPoint = data.setPoint or "CENTER";
 		frame:SetWidth(Filger_Spells[class][i][1] and Filger_Spells[class][i][1].size or 100);
 		frame:SetHeight(Filger_Spells[class][i][1] and Filger_Spells[class][i][1].size or 20);
-		frame:SetPoint(unpack(data.setPoint));
-
+		
 		if (enable) then
 			for j = 1, #Filger_Spells[class][i], 1 do
 				data = Filger_Spells[class][i][j];
@@ -476,8 +750,8 @@ local function moving()
 						name, _, _, _, _, _, _, _, _, spellIcon = GetItemInfo(slotLink);
 					end
 				end
-				table.insert(active[i], { data = data, icon = spellIcon, count = 9, duration = 0, expirationTime = 0 });
-				if (j > 5) then 
+				table.insert(active[i], { data = data, icon = spellIcon, count = 9, duration = 0, expirationTime = 0, spid = data.spellID or data.slotID });
+				if (j > 3) then 
 					break;
 				end
 			end
