@@ -330,7 +330,7 @@ C["Filger_Spells"] = {
 	["PRIEST"] = { -------------------------------------------------------------------------------------------------------- Priest
 		{
 			Name = "Self Buffs",
-			Enable = true,
+			Enable = false,
 			Direction = "LEFT",
 			Interval = 4,
 			Mode = "ICON",
@@ -348,7 +348,7 @@ C["Filger_Spells"] = {
 		},
 		{
 			Name = "Cooldown",
-			Enable = true,
+			Enable = false,
 			Direction = "UP",
 			Interval = 3,
 			Mode = "ICON",
@@ -369,7 +369,7 @@ C["Filger_Spells"] = {
 			-- Circle of Healing
 			{ spellID = 34861, size = 37, filter = "CD" },
 			-- Prayer of Mending
-			{ spellID = 33076, size = 37, filter = "CD" },
+			-- { spellID = 33076, size = 37, filter = "CD" },
 			-- Psychic Scream
 			{ spellID = 8122, size = 37, filter = "CD" }, 
 			-- Shadowfiend
@@ -383,7 +383,7 @@ C["Filger_Spells"] = {
 		},
 		{
 			Name = "Buffs and Debuffs",
-			Enable = true,
+			Enable = false,
 			Direction = "RIGHT",
 			Interval = 3,
 			Mode = "ICON",
@@ -426,7 +426,7 @@ C["Filger_Spells"] = {
 			setPoint = { "BOTTOMLEFT", "iFilgerProcs", 0, -63 },
 
 			-- Spirit of Redemption
-			{ spellID = 27827, size = 60, unitId = "player", caster = "all", filter = "BUFF" },
+			-- { spellID = 27827, size = 60, unitId = "player", caster = "all", filter = "BUFF" },
 			-- Surge of Light
 			{ spellID = 88688, size = 60, unitId = "player", caster = "all", filter = "BUFF" },
 			-- Serendipity
@@ -440,7 +440,7 @@ C["Filger_Spells"] = {
 		},	
 		{
 			Name = "Buffs and Debuffs HEAL",
-			Enable = true,
+			Enable = false,
 			Direction = "LEFT",
 			Interval = 3,
 			Mode = "ICON",
@@ -449,7 +449,7 @@ C["Filger_Spells"] = {
 			setPoint = { "TOPRIGHT", "iFilgerBuffDebuffHeal", 20, -22 },
 
 			-- Prayer of Mending
-			{ spellID = 41635, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
+			-- { spellID = 41635, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
 			-- Guardian Spirit
 			{ spellID = 47788, size = 37, unitId = "target", caster = "player", filter = "BUFF" },
 			-- Pain Suppression
@@ -471,7 +471,7 @@ C["Filger_Spells"] = {
 		},
 		{
 			Name = "Focus",
-			Enable = true,
+			Enable = false,
 			Direction = "LEFT",
 			IconSide = "LEFT",
 			Interval = 4,
@@ -502,13 +502,13 @@ C["Filger_Spells"] = {
 			setPoint = { "BOTTOM", "iFilgerProcDps", 0, 52 },
 
 			-- Mind Blast
-			{ spellID = 8092, size = 36, filter = "CD" },
+			-- { spellID = 8092, size = 36, filter = "CD" },
 			-- Holy Fire
 			{ spellID = 14914, size = 36, filter = "CD" },
 		},
 		{
 			Name = "Buffs and Debuffs",
-			Enable = true,
+			Enable = false,
 			Direction = "LEFT",
 			Interval = 4,
 			Mode = "ICON",
@@ -530,7 +530,7 @@ C["Filger_Spells"] = {
 		},
 		{
 			Name = "Buffs and Debuffs",
-			Enable = true,
+			Enable = false,
 			Direction = "RIGHT",
 			Interval = 3,
 			Mode = "ICON",
